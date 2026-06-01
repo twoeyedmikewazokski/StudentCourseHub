@@ -1,0 +1,17 @@
+// Deno Commands
+Install deno on mac: curl -fsSL https://deno.land/install.sh | sh
+Intsall deno on windows: irm https://deno.land/install.ps1 | iex
+// deno --version -- makes sure that deno is setup and working properly
+// deno main.js
+// deno --allow-net main.js to give deno the permission to run a web server on the internet
+// deno add jsr:@std/http - import a server library dependency to your project by executing this command on shell
+// deno add jsr:@std/http/file-server - dependency that will allow deno run a file server on the web
+// --allow-read -- gives server permission to read files from disk
+// --allow-net
+// --allow-all -- gives server all the permissions self explanatory.
+// --watch --automatically refreshes web-server everytime you update server code
+// deno add jsr:@db/sqlite -- add the SQLite library to deno
+// deno add jsr:@std/html -- adds the HTML utilities package which will allow you to import and
+// use the escape function to mitigate/prevent XSS attacks
+
+ main command: deno --watch --allow-all main.js
