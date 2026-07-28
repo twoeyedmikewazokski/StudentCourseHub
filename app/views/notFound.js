@@ -1,4 +1,4 @@
-// function aboutView() - Returns a HTML rendered fragment if a page has not been found in the file server
+// function notFoundView() - Returns a HTML rendered fragment if a page has not been found in the file server
 export function notFoundView() {
     return `
         <h2> Page not found <h2>

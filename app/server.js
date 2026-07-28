@@ -11,10 +11,12 @@ import { addProgrammeController, programmesController } from "./controllers/prog
 import { programmeController } from "./controllers/programme.js";
 import { addSessionController, logoutController, staffLoginFormController } from "./controllers/sessions.js";
 import { addStaffController, staffRegistrationFormController } from "./controllers/staff.js";
+import { serverFailureView } from "./views/internalServerFailure.js";
 
 // A deno server handler which is necessary to handle dynamic HTML pages instead of static ones only.
 
 export function serverHandler(request) {
+    try {
     // New URL object which obtains the URL of our web server
     const url = new URL(request.url);
     // acquire pathname from the URL object
@@ -36,7 +38,7 @@ export function serverHandler(request) {
 
     }
 
-    // Server handing for dynamic views.
+    // Server-side handing for dynamic views.
     if (pathname === "/") {
         console.log("home");
         return homeController();
@@ -73,7 +75,7 @@ export function serverHandler(request) {
         return staffRegistrationFormController({ request });
     }
 
-    if (pathname === "/staffauth" && method === "POST") {
+    if (pathname === "/staffsessions" && method === "POST") {
         console.log("Create staff session");
         return addSessionController({ request });
     }
@@ -88,13 +90,16 @@ export function serverHandler(request) {
         return logoutController({ request });
     }
 
-
     // If no such file can be found if you request a path that does not exist
-    // else { 
-    //     console.log("notFound", pathname);
-    //     console.debug(request)
-    //     return notFoundController();
-    // }
+    else { 
+        console.log("notFound", pathname);
+        console.debug(request)
+        return notFoundController();
+    }
+
+    } catch (error) {
+        console.error(error)
+    }
 
 }
 

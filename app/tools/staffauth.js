@@ -1,8 +1,11 @@
 import { createSession, deleteSession, getSession } from "../models/sessions.js";
 import { setCookie, getCookies, deleteCookie} from "jsr:@std/http";
 
-export function login(headers, username) {
-    const sessionId = createSession(username);
+export function login(headers, { StaffID }) {
+    console.log("!!!!!!!!!!!!")
+    console.log(StaffID)
+    const sessionId = createSession(StaffID);
+    console.log(sessionId)
     setCookie(headers , {
         name: "sessionId",
         value: sessionId,

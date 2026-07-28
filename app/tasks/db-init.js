@@ -1,6 +1,7 @@
 // Import database from /tools/db.js so we can create our database for our web student course hub and initalise some tables and columns
 import { db } from "../tools/db.js";
 
+try {
 db.exec(`
     -- Drop tables in reverse dependency order
     DROP TABLE IF EXISTS InterestedStudents;
@@ -20,14 +21,14 @@ db.exec(`
     CREATE TABLE Staff (
         StaffID INTEGER PRIMARY KEY,
         Name TEXT NOT NULL,
-        Username TEXT NOT NULL,
+        Username TEXT NOT NULL UNIQUE,
         Password TEXT NOT NULL
     ); 
 
-    CREATE Table StaffSessions (
-        ID TEXT PRIMARY KEY,
-        Username TEXT NOT NULL,
-        FOREIGN KEY (Username) REFERENCES Staff(StaffID) ON DELETE CASCADE
+    CREATE TABLE StaffSessions (
+        SessionID TEXT PRIMARY KEY,
+        StaffID INTEGER NOT NULL,
+        FOREIGN KEY (StaffID) REFERENCES Staff(StaffID) ON DELETE CASCADE
     );
 
     CREATE TABLE Modules (
@@ -76,7 +77,7 @@ db.exec(`
 
     -- Staff
     INSERT INTO Staff (StaffID, Name, Username, Password) VALUES
-    (1, 'Dr. Alice Johnson', 'ajohnson123', 'password123'), 
+    (1, 'Dr. Alice Johnson', 'ajohnson123', '31faceb5794c613dbc51aa40fd4bb433ffd2e9e5f3c4c514a237da7ca353b526'), -- Password123
     (2, 'Dr. Brian Lee', 'brianlee456', 'password123355'), 
     (3, 'Dr. Carol White', 'carolwhite425', 'password456'), 
     (4, 'Dr. David Green', 'davegreen5', 'password456'),
@@ -197,3 +198,6 @@ db.exec(`
 
 console.log("Database tables initialised")
     
+} catch (error) {
+    console.error(error)
+}

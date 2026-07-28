@@ -16,14 +16,18 @@ const options = {
 // Encryption is two-way as it is possible for the process to be reverse with the right key, as it is one-way, it irreversibly transforms data
 // into a unreadable format.
 export async function hashPassword(password) {
-    //convert input into bytes
-    const inputBytes = new TextEncoder().encode(password);
-    const key = await crypto.subtle.importKey("raw", inputBytes, "PBKDF2", false, ["deriveBits"]);
-    const buffer = await crypto.subtle.deriveBits(options, key, 256);
-    // convert hashed into hexadecimal
-    const padded = Array.from(new Uint8Array(buffer)).map(byte => byte.toString(16).padStart(2, 0));
-    // return hash digest in hexadecimal and without whitespaces.
-    return padded.join("");
+    try {
+        //convert input into bytes
+        const inputBytes = new TextEncoder().encode(password);
+        const key = await crypto.subtle.importKey("raw", inputBytes, "PBKDF2", false, ["deriveBits"]);
+        const buffer = await crypto.subtle.deriveBits(options, key, 256);
+        // convert hashed into hexadecimal
+        const padded = Array.from(new Uint8Array(buffer)).map(byte => byte.toString(16).padStart(2, 0));
+        // return hash digest in hexadecimal and without whitespaces.
+        return padded.join("");
+    } catch (error) {
+        console.error(error)
+    }
 
 }
 

@@ -18,8 +18,14 @@ export function getProgrammes() {
 
 // GET METHOD 
 export function getProgramme(ProgrammeID) {
-    return db.prepare("SELECT * FROM Programmes JOIN Staff WHERE Programmes.ProgrammeLeaderID = Staff.StaffID AND ProgrammeID = ?").get(ProgrammeID);
+    return db.prepare("SELECT * FROM Programmes JOIN Staff WHERE Programmes.ProgrammeLeaderID = Staff.StaffID AND Programmes.ProgrammeID = ?").get(ProgrammeID);
 }
+
+// GET METHOD 
+export function getProgrammeByName(ProgrammeName) {
+    return db.prepare("SELECT * FROM Programmes WHERE ProgrammeName = ?").get(ProgrammeName);
+}
+
 
 // GET METHOD 
 export function getProgrammeByLevel(ProgrammeID) {
@@ -27,27 +33,20 @@ export function getProgrammeByLevel(ProgrammeID) {
 }
 
 // POST METHOD 
-export function createProgramme({ProgrammeName, Description}) {
-    return db.prepare(`INSERT INTO Programmes (ProgrammeName, Description) VALUES (?, ?)`).run(ProgrammeName, Description);
+export function createProgramme({ProgrammeName, Description, ProgrammeLeaderID}, LevelID) {
+    return db.prepare(`INSERT INTO Programmes (ProgrammeName, Description, ProgrammeLeaderID, LevelID) VALUES (?, ?, ?, ?)`).run(ProgrammeName, Description, ProgrammeLeaderID, LevelID);
 }
+
 
 // POST METHOD
 export function removeProgramme(ProgrammeID) {
     return db.prepare(`DELETE FROM Programmes WHERE ProgrammeID = ?`).run(ProgrammeID)
 }
 
-//Initialise everything from the staff table along with the modules they lead and populate the staff list member page/
-
-// function getModuleStaff() {
-//     $query = DB -> query('SELECT * FROM Staff JOIN Modules WHERE Staff.StaffID = Modules.ModuleLeaderID;');
-//     return $query-> fetchall(PDO::FETCH_ASSOC);
-// }
-
-//Initialise everything from the staff table if they lead a programme and populate the programme leader list
-
-// function getProgrammeStaff() {
-//     $query = DB -> query('SELECT * FROM Staff JOIN Programmes WHERE Staff.StaffID = Programmes.ProgrammeLeaderID;');
-//     return $query-> fetchall(PDO::FETCH_ASSOC);
+// GET METHOD
+export function getProgrammeLeaders() {
+    return db.prepare("SELECT * FROM Staff JOIN Programmes WHERE Staff.StaffID = Programmes.ProgrammeLeaderID").all()
+}
 
 // Unprepared statement
 // export function addItem(name, description) {

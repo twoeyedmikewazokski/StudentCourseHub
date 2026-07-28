@@ -20,14 +20,19 @@ import { escape } from "@std/html"
 function programmesToHTML(programme) {
     return `
         <li>
-            <a href = "/programme/${programme.ProgrammeID} "> ${escape(programme.ProgrammeName)} </a>: ${escape(programme.Description)}
+            <a href = "/programme/${programme.ProgrammeID}"> ${escape(programme.ProgrammeName)} </a>: ${escape(programme.Description)}
         </li>
     `
 }
 
-export function programmesView({ programmes, errors = {} }) {
+function programmeLeadersToHTML(staff) {
+    return `<option value = "${staff.StaffID}"> ${staff.Name} </option>`
+}
+
+export function programmesView({ programmes, programmeLeaders, errors = {} }) {
     const programmesHTML = programmes.map(programmesToHTML).join('');
-    console.log("Programmes List initalised")
+    const programmeLeadersHTML = programmeLeaders.map(programmeLeadersToHTML).join('');
+    console.log("Programmes List initialised")
     // console.log(programmesHTML)
     return `
         <section>
@@ -43,6 +48,18 @@ export function programmesView({ programmes, errors = {} }) {
                     <input type = "text" id = "Description" name = "Description" required value ="${errors.Description?.value || ""}">
                     <span class = "error">${errors.Description?.message || ""}</span>
                 </div>
+                </div>
+                    <label for="ProgrammeLeaderID"> Programme Leader </label>
+
+                    <select id="ProgrammeLeaderID"
+                        name="ProgrammeLeaderID"
+                        required
+                    >
+                        <option value="">Choose a Programme Leader</option>
+                        ${programmeLeadersHTML}
+
+                    </select>
+                <div>
                 <button type="submit"> Add Programme </button>
             </form>
             <ul>
@@ -51,3 +68,10 @@ export function programmesView({ programmes, errors = {} }) {
         </section>
     `
 }
+
+                        // ${programmeLeaders.map(staff => `
+                        //         <option value="${staff.StaffID}">
+                        //             ${staff.Name}
+                        //         </option>
+                        //     `).join("")
+                        // }
