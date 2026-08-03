@@ -3,6 +3,8 @@
 // ---- ---- ---- ---- ----  Field validation methods ---- ---- ---- ---- ----
 
 import { getProgrammeByName } from "../models/programmes.js";
+import { getModuleByName } from "../models/modules.js";
+import { getStaffByUsername } from "../models/staff.js";
 
 // Required validation method
 export function required(name, value) {
@@ -47,7 +49,7 @@ export function validateField(name, value, validators) {
     }
 }
 
-// ---- ---- ---- ---- ----  PROGRAMME VALIDATION METHODS ---- ---- ---- ---- ---- //
+// ---- ---- ---- ---- ----  Programme Validation Methods ---- ---- ---- ---- ---- //
 
 // Checks if the programmeName has either a Bachelor of Science or Master of Science abbreivation
 // at the start of the programme name, this is used to also automatically assign a LevelID of 1 (BSc) or 2 (MSc) to a new programme
@@ -72,6 +74,7 @@ export function getProgrammeLevelID(value) {
     return null;
 }
 
+// Validates if a programme already name exists, accounting for lower and uppercase characters
 export function uniqueProgramme(name, ProgrammeName) {
     // Split the programmeName string on the form into multiple strings and capitalise the first letter of every word only
     // using the map function so that the user cannot bypass this validator by making capital letters lowercase or uppercase.
@@ -83,8 +86,29 @@ export function uniqueProgramme(name, ProgrammeName) {
     }
 }
 
+// ---- ---- ---- ---- ----  Module Validation Methods---- ---- ---- ---- ---- //
 
+// Validates if a module name already exists, accounting for lower and uppercase characters
+export function uniqueModule(name, ModuleName) {
+    const validateName = ModuleName.split(' ').map(w => w[0].toUpperCase() + w.slice(1)).join(' ')
+    const existingModule = getModuleByName(validateName)
+    if (existingModule) {
+        console.log(existingModule)
+        return `Module '${name}' already exists`
+    }
+}
 
+// ---- ---- ---- ---- ----  Staff Validation Methods---- ---- ---- ---- ---- //
+
+// Validates if a staff user name already exists, accounting for lower and uppercase characters
+export function uniqueStaffUser(name, Username) {
+    const validateName = Username.split(' ').map(w => w[0].toUpperCase() + w.slice(1)).join(' ')
+    const existingStaffUser = getStaffByUsername(validateName)
+    if (existingStaffUser) {
+        console.log(existingStaffUser)
+        return `Module '${name}' already exists`
+    }
+}
 
 // ---- ---- ---- ---- ----  Validation Schemas ---- ---- ---- ---- ---- //
 
@@ -131,6 +155,22 @@ export const newProgrammeSchema = {
     },
 } 
 
+// Validation schema for verifying details of a new module
+export const newModuleSchema = {
+    'ModuleName' : {
+        validators: [required, minLength(6), maxLength(50), uniqueModule],
+        displayName: "Module Name"
+    },
+    'Description' : {
+        validators: [required, minLength(30), maxLength(1200)],
+        displayName: "Description" // displayName property allows us to show data in a nicer format than the raw key in error messaging.
+    },
+    'ModuleLeaderID' : {
+        validators: [required],
+        displayName: "Module Leader ID"
+    },
+} 
+
 //Validation schema for authenticating new staff details
 export const newStaffSchema = {
     'Name' : {
@@ -138,7 +178,7 @@ export const newStaffSchema = {
         displayName: "Name"
     },
     'Username' : {
-        validators: [required, minLength(5), maxLength(50)],
+        validators: [required, minLength(5), maxLength(50), uniqueStaffUser],
         displayName: "Username"
     },
     'Password' : {

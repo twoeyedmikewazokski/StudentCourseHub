@@ -25,6 +25,12 @@ export function getStaffIdByUsername(Username) {
     return db.prepare("SELECT StaffID FROM Staff WHERE Username = ?").get(Username);
 }
 
+// GET METHOD
+// Function to get roleID from staff user by username
+export function getIsAdminByUsername(Username) {
+    return db.prepare("SELECT IsAdmin FROM Staff WHERE Username = ?").get(Username);
+}
+
 // POST METHOD
 // Parameters are wrapped for createStaffUser to pass validated data which will be pass
 // as a singular object as a singular argument. Post methods are always asynchronous, not idiocratic and 
@@ -33,7 +39,6 @@ export async function createStaffUser({Name, Username, Password}) {
     try {
         console.log({Name, Username, Password})
         const PasswordHash = await hashPassword(Password);
-        console.log({Name, Username}, PasswordHash)
         return db.prepare("INSERT INTO Staff (Name, Username, Password) VALUES (?, ?, ?)").run(Name, Username, PasswordHash);
     }
     catch (error) {
@@ -42,6 +47,14 @@ export async function createStaffUser({Name, Username, Password}) {
 
 }
 
+// POST METHOD
+// Insert profile picture for a staff member
+export function uploadProfilePic(ProfileImageID, StaffID) {
+    return db.prepare(`UPDATE Staff (ProfileImageID) VALUES (?) WHERE StaffID = ?`).run(ProfileImageID, StaffID);
+}
+
+
+// POST METHOD
 // Validate credentials when submitting details on the staffLoginView
 export async function validateCredentials({Username, Password}) {
     const staffUser = getStaffByUsername(Username);

@@ -1,5 +1,6 @@
 import { createSession, deleteSession, getSession } from "../models/sessions.js";
 import { setCookie, getCookies, deleteCookie} from "jsr:@std/http";
+import { getStaffById } from "../models/staff.js";
 
 export function login(headers, { StaffID }) {
     console.log("!!!!!!!!!!!!")
@@ -21,5 +22,13 @@ export function logout(headers, request) {
 
 export function currentSession(request) {
     const { sessionId } = getCookies(request.headers);
+    console.log({sessionId})
     return sessionId && getSession(sessionId);
+}
+
+export function currentUser(request) {
+    const session = currentSession(request);
+    if (!session)
+        return
+    return getStaffById(session.StaffID);
 }

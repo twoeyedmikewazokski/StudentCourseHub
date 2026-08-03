@@ -7,5 +7,10 @@ export function getPModules(ProgrammeID) {
         JOIN Modules JOIN Programmes JOIN Staff WHERE Programmes.ProgrammeID = ProgrammeModules.ProgrammeID 
         AND Modules.ModuleID = ProgrammeModules.ModuleID 
         AND Modules.ModuleLeaderID = Staff.StaffID 
-        AND Programmes.ProgrammeID = (?)`).get(ProgrammeID);
+        AND Programmes.ProgrammeID = ?`).all(ProgrammeID);
+}
+
+// GET METHOD
+export function getProgrammeModulesByProgrammeID({ ProgrammeID }) {
+    return db.prepare('SELECT * FROM Modules JOIN ProgrammeModules JOIN Programmes WHERE ProgrammeModules.ModuleID = Modules.ModuleID AND ProgrammeModules.ProgrammeID = Programmes.ProgrammeID AND ProgrammeModules.ProgrammeID = ?').get({ ProgrammeID })
 }

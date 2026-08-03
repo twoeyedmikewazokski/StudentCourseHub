@@ -1,3 +1,12 @@
+// The problem with static HTML files is that every file has repeat content such as
+// header, nav, main and footer elements which violates the Don't Repeat Yourself Principle
+// We use dynamically-rended HTML files which uses a singular template that
+// wraps all the pages and use view functions to return unique content for each page of our website.
+// Using a singular template in line with the MVC app architecture ensures maintainability and extensibility
+// and create a proper separation of concerns. 
+
+import { currentUser } from "./staffauth.js";
+
 //render() function essentially takes a view function as an argument and then calls the view function
 //to get the necessary fragment. It then wraps the fragment in HTML boilerplate using template literals (${})
 //Finally, it returns an HTML response.
@@ -5,10 +14,12 @@
 export function render(viewFunction, data, status) {
     try {
         const content = viewFunction(data);
-        // const sessionMessage = data ? `Logged in as ${data.username}` : "";
+        const sessionMessage = data ? `Logged in as ${data.username}` : "";
         // const authNav = data ? `<form method="POST" action="/stafflogout"><button
         //     type="submit">Logout</button></form>`
         //     : `<a href="/staffauth">Sign-in</a>`;
+        // const user = currentUser(data)
+        // console.log(user)
         console.log("HTML rendered")
         return new Response(
             `<!DOCTYPE html>
@@ -28,6 +39,8 @@ export function render(viewFunction, data, status) {
                             <li><a href = "/"> Home </a></li>
                             <li><a href = "/about"> About </a></li>
                             <li><a href = "/programmes"> Programmes </a></li>
+                            <li><a href = "/modules"> Modules </a></li>
+                            <li><a href = "/staff"> Staff </a></li>
                             <li><a href = "/staffauth"> Sign-in </a></li>
                         </ul>
                     </nav>
@@ -35,6 +48,7 @@ export function render(viewFunction, data, status) {
                         ${content}
                     </main>
                     <footer>
+                        <p>${sessionMessage}</p>
                         <p>&copy; 2026 Student Course Hub. All rights reserved.</p>
                     </footer>
                 </body>

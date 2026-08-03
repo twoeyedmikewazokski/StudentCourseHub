@@ -2,7 +2,6 @@
 
 // POST method to process staff details at /Sessions page
 export function staffLoginView({ errors = {} }) {
-    console.log({ errors })
     return `<section class="center">
         <h2>Sign in</h2>
             <p>

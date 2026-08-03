@@ -9,7 +9,7 @@ export function createSession(StaffID) {
 
 // GET METHOD
 export function getSession(SessionID) {
-    return db.prepare("SELECT * FROM StaffSessions WHERE SessionID = ?").get({ SessionID });
+    return db.prepare("SELECT * FROM StaffSessions WHERE SessionID = ?").get(SessionID);
 }
 
 // POST METHOD

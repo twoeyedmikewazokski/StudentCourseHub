@@ -32,20 +32,24 @@ export function getProgrammeByLevel(ProgrammeID) {
     return db.prepare("SELECT * FROM Programmes WHERE LevelID = ?").get(ProgrammeID);
 }
 
+// GET METHOD
+export function getProgrammeLeaders() {
+    return db.prepare("SELECT * FROM Staff JOIN Programmes WHERE Staff.StaffID = Programmes.ProgrammeLeaderID").all()
+}
+
+// GET Method
+export function getProgrammesByProgrammeLeaderID(ProgrammeLeaderID) {
+    return db.prepare("SELECT * FROM Programmes JOIN Staff WHERE Programmes.ProgrammeLeaderID = Staff.StaffID AND ProgrammeLeaderID = ?").all(ProgrammeLeaderID)
+}
+
 // POST METHOD 
 export function createProgramme({ProgrammeName, Description, ProgrammeLeaderID}, LevelID) {
     return db.prepare(`INSERT INTO Programmes (ProgrammeName, Description, ProgrammeLeaderID, LevelID) VALUES (?, ?, ?, ?)`).run(ProgrammeName, Description, ProgrammeLeaderID, LevelID);
 }
 
-
 // POST METHOD
 export function removeProgramme(ProgrammeID) {
     return db.prepare(`DELETE FROM Programmes WHERE ProgrammeID = ?`).run(ProgrammeID)
-}
-
-// GET METHOD
-export function getProgrammeLeaders() {
-    return db.prepare("SELECT * FROM Staff JOIN Programmes WHERE Staff.StaffID = Programmes.ProgrammeLeaderID").all()
 }
 
 // Unprepared statement

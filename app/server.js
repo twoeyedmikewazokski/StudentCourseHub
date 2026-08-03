@@ -11,7 +11,13 @@ import { addProgrammeController, programmesController } from "./controllers/prog
 import { programmeController } from "./controllers/programme.js";
 import { addSessionController, logoutController, staffLoginFormController } from "./controllers/sessions.js";
 import { addStaffController, staffRegistrationFormController } from "./controllers/staff.js";
-import { serverFailureView } from "./views/internalServerFailure.js";
+import { modulesController, addModuleController } from "./controllers/modules.js";
+import { moduleController } from "./controllers/module.js";
+import { staffListController } from "./controllers/staffList.js";
+import { staffProfileController } from "./controllers/staffProfile.js";
+import { staffMemberController } from "./controllers/staffMember.js";
+import { currentUser} from "./tools/staffauth.js";
+import { adminController } from "./controllers/admin.js";
 
 // A deno server handler which is necessary to handle dynamic HTML pages instead of static ones only.
 
@@ -25,10 +31,27 @@ export function serverHandler(request) {
     const method = request.method;
     // log every time you fetch files
     console.log(method, url.pathname, url.search);
-    // URL Pattern for Programme
+    // URL Pattern for Programme pages
     const programmeProfilePattern = new URLPattern({ pathname: 
         "/programme/:programmeId"
     });
+    // URL Pattern for Module pages
+    const moduleProfilePattern = new URLPattern({ pathname:
+        "/module/:moduleId"
+    });
+    // URL Pattern for Staff Profiles
+    const staffProfilePattern = new URLPattern({ pathname:
+        "/staff/:staffId/profile"
+    });
+    // URL Pattern for Staff Profiles
+    const staffMemberProfilePattern = new URLPattern({ pathname:
+        "/staff/:staffId"
+    });
+    // Get current user in session
+    console.log("??????!!!!!!")
+    const user = currentUser(request);
+    console.log("??????!!!!!!")
+    console.log(user);
 
     // We first handle static files from the assets folder using the imported serveDir function
     // when we start up and request the file server
@@ -65,6 +88,22 @@ export function serverHandler(request) {
         return programmeController({ programmeId });
     }
 
+    if (pathname === "/modules" && method == "GET") {
+        console.log("modules")
+        return modulesController({ request })
+    }
+
+    if (pathname === "/modules" && method == "POST") {
+        console.log("Creating Module")
+        return addModuleController({ request })
+    }
+
+    if (moduleProfilePattern.test(url) && method == "GET") {
+        const { moduleId } = moduleProfilePattern.exec(url).pathname.groups;
+        console.log("Module Details successfully loaded")
+        return moduleController({ moduleId })
+    }
+
     if (pathname === "/staffauth" && method === "GET") {
         console.log("Staff Login Form")
         return staffLoginFormController({ request });
@@ -90,10 +129,31 @@ export function serverHandler(request) {
         return logoutController({ request });
     }
 
+    if (pathname == "/staff" && method == "GET") {
+        console.log("Staff List");
+        return staffListController({ request});
+    }
+
+    if (staffProfilePattern.test(url) && method == "GET") {
+        const { staffId } = staffProfilePattern.exec(url).pathname.groups;
+        console.log(`Staff Profile '${ staffId }'`);
+        return staffProfileController({ staffId } );
+    }
+
+    if (staffMemberProfilePattern.test(url) && method == "GET") {
+        const { staffId } = staffMemberProfilePattern.exec(url).pathname.groups;
+        console.log(`Loading Staff Member page`);
+        return staffMemberController({ staffId } );
+    }
+
+    if (pathname == "/admin" && method == "GET") {
+        console.log("Getting admin page");
+        return adminController({ request, user })
+    }
+
     // If no such file can be found if you request a path that does not exist
     else { 
         console.log("notFound", pathname);
-        console.debug(request)
         return notFoundController();
     }
 

@@ -13,7 +13,7 @@ export function programmesController() {
         const programmeLeaders = getAllStaffUsers();
         console.log(programmes)
         console.log(programmeLeaders)
-        // Return const when we need to pass programmesView into render as a request.
+        // Return programmesView populated with programmes and programme leaders through the render function
         return render(programmesView, { programmes, programmeLeaders });
     } catch (error) {
         console.error(error)
@@ -35,7 +35,7 @@ export async function addProgrammeController({ request }) {
         if (!isValid) {
             const programmes = getProgrammes();
             const programmeLeaders = getAllStaffUsers();
-            return render(programmesView, {programmes, programmeLeaders, errors}, 400);
+            return render(programmesView, { programmes, programmeLeaders, errors }, 400);
         }
         console.log({ isValid, errors, validated })
 

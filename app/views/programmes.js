@@ -68,10 +68,3 @@ export function programmesView({ programmes, programmeLeaders, errors = {} }) {
         </section>
     `
 }
-
-                        // ${programmeLeaders.map(staff => `
-                        //         <option value="${staff.StaffID}">
-                        //             ${staff.Name}
-                        //         </option>
-                        //     `).join("")
-                        // }

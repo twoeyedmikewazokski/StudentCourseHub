@@ -3,7 +3,7 @@ import { redirect } from "../tools/redirect.js";
 import { validateSchema, currentStaffSchema } from "../tools/validation.js";
 import { staffLoginView } from "../views/staffauth.js";
 import { currentSession, login, logout } from "../tools/staffauth.js"
-import { getStaffIdByUsername, validateCredentials } from "../models/staff.js";
+import { getStaffById, getStaffIdByUsername, validateCredentials } from "../models/staff.js";
 
 export function staffLoginFormController({ request }) {
     try {

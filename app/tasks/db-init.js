@@ -13,25 +13,28 @@ db.exec(`
     DROP TABLE IF EXISTS StaffSessions;
 
     -- Recreate schema
-    CREATE TABLE Levels (
+    CREATE TABLE IF NOT EXISTS Levels (
         LevelID INTEGER PRIMARY KEY,
         LevelName TEXT NOT NULL
     );
 
-    CREATE TABLE Staff (
+    CREATE TABLE IF NOT EXISTS Staff (
         StaffID INTEGER PRIMARY KEY,
         Name TEXT NOT NULL,
         Username TEXT NOT NULL UNIQUE,
-        Password TEXT NOT NULL
+        Password TEXT NOT NULL,
+        IsAdmin INTEGER DEFAULT 0, -- 0: non-admin user, 1: admin user
+        ProfileImageID INTEGER,
+        FOREIGN KEY (ProfileImageID) REFERENCES Files(FileID)
     ); 
 
-    CREATE TABLE StaffSessions (
+    CREATE TABLE IF NOT EXISTS StaffSessions (
         SessionID TEXT PRIMARY KEY,
         StaffID INTEGER NOT NULL,
         FOREIGN KEY (StaffID) REFERENCES Staff(StaffID) ON DELETE CASCADE
     );
 
-    CREATE TABLE Modules (
+    CREATE TABLE IF NOT EXISTS Modules (
         ModuleID INTEGER PRIMARY KEY,
         ModuleName TEXT NOT NULL,
         ModuleLeaderID INTEGER,
@@ -40,7 +43,7 @@ db.exec(`
         FOREIGN KEY (ModuleLeaderID) REFERENCES Staff(StaffID)
     ); 
 
-    CREATE TABLE Programmes (
+    CREATE TABLE IF NOT EXISTS Programmes (
         ProgrammeID INTEGER PRIMARY KEY AUTOINCREMENT,
         ProgrammeName TEXT NOT NULL,
         LevelID INTEGER,
@@ -51,7 +54,7 @@ db.exec(`
         FOREIGN KEY (ProgrammeLeaderID) REFERENCES Staff(StaffID)
     ); 
 
-    CREATE TABLE ProgrammeModules (
+    CREATE TABLE IF NOT EXISTS ProgrammeModules (
         ProgrammeModuleID INTEGER PRIMARY KEY AUTOINCREMENT,
         ProgrammeID INTEGER,
         ModuleID INTEGER,
@@ -60,13 +63,20 @@ db.exec(`
         FOREIGN KEY (ModuleID) REFERENCES Modules(ModuleID)
     );
 
-    CREATE TABLE InterestedStudents (
-        InterestID INTEGER  PRIMARY KEY AUTOINCREMENT,
+    CREATE TABLE IF NOT EXISTS InterestedStudents (
+        InterestID INTEGER PRIMARY KEY AUTOINCREMENT,
         ProgrammeID INTEGER NOT NULL,
         StudentName VARCHAR(100) NOT NULL,
         Email VARCHAR(255) NOT NULL,
         RegisteredAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (ProgrammeID) REFERENCES Programmes(ProgrammeID) ON DELETE CASCADE
+    );
+
+    CREATE TABLE IF NOT EXISTS Files (
+        FileID INTEGER PRIMARY KEY AUTOINCREMENT,
+        Name TEXT NOT NULL,
+        Type TEXT NOT NULL,
+        Bytes BLOB NOT NULL
     );
 
     -- Seed data
@@ -78,25 +88,28 @@ db.exec(`
     -- Staff
     INSERT INTO Staff (StaffID, Name, Username, Password) VALUES
     (1, 'Dr. Alice Johnson', 'ajohnson123', '31faceb5794c613dbc51aa40fd4bb433ffd2e9e5f3c4c514a237da7ca353b526'), -- Password123
-    (2, 'Dr. Brian Lee', 'brianlee456', 'password123355'), 
-    (3, 'Dr. Carol White', 'carolwhite425', 'password456'), 
-    (4, 'Dr. David Green', 'davegreen5', 'password456'),
-    (5, 'Dr. Emma Scott', 'emmascott456', 'password123563'), 
-    (6, 'Dr. Frank Moore', 'frankmoore675', 'password452'), 
-    (7, 'Dr. Grace Adams', 'graceadams764', 'secwgwwd'), 
-    (8, 'Dr. Henry Clark', 'henryclark5362', 'sefwrwf'),
-    (9, 'Dr. Irene Hall', 'ireneh4425', 'password123456'), 
-    (10, 'Dr. James Wright', 'jamesonisthebest563', 'password123563'), 
-    (11, 'Dr. Sophia Miller', 'sophiaisthebest25', 'password123636'), 
-    (12, 'Dr. Benjamin Carter', 'benjamincarter345', 'password1234567'), 
-    (13, 'Dr. Chloe Thompson', 'chloethompson359263', 'password123456'), 
-    (14, 'Dr. Daniel Robinson', 'danielrobin456', 'password123'),
-    (15, 'Dr. Emily Davis', 'emilydavistt353', 'staffpass452'), 
-    (16, 'Dr. Nathan Hughes', 'nathanhuge5262', 'password123256'), 
-    (17, 'Dr. Olivia Martin', 'oliviamartin2552', 'password1234'), 
-    (18, 'Dr. Samuel Anderson', 'samualanderson256', 'password12345'),
-    (19, 'Dr. Victoria Hall', 'victoriahall452', 'passphaseboom245'), 
-    (20, 'Dr. William Scott', 'williamscott363', 'password123525');
+    (2, 'Dr. Brian Lee', 'brianlee456', '31faceb5794c613dbc51aa40fd4bb433ffd2e9e5f3c4c514a237da7ca353b526'), 
+    (3, 'Dr. Carol White', 'carolwhite425', '31faceb5794c613dbc51aa40fd4bb433ffd2e9e5f3c4c514a237da7ca353b526'), 
+    (4, 'Dr. David Green', 'davegreen5', '31faceb5794c613dbc51aa40fd4bb433ffd2e9e5f3c4c514a237da7ca353b526'), 
+    (5, 'Dr. Emma Scott', 'emmascott456', '31faceb5794c613dbc51aa40fd4bb433ffd2e9e5f3c4c514a237da7ca353b526'), 
+    (6, 'Dr. Frank Moore', 'frankmoore675', '31faceb5794c613dbc51aa40fd4bb433ffd2e9e5f3c4c514a237da7ca353b526'), 
+    (7, 'Dr. Grace Adams', 'graceadams764', '31faceb5794c613dbc51aa40fd4bb433ffd2e9e5f3c4c514a237da7ca353b526'), 
+    (8, 'Dr. Henry Clark', 'henryclark5362', '31faceb5794c613dbc51aa40fd4bb433ffd2e9e5f3c4c514a237da7ca353b526'),
+    (9, 'Dr. Irene Hall', 'ireneh4425', '31faceb5794c613dbc51aa40fd4bb433ffd2e9e5f3c4c514a237da7ca353b526'), 
+    (10, 'Dr. James Wright', 'jamesonisthebest563', '31faceb5794c613dbc51aa40fd4bb433ffd2e9e5f3c4c514a237da7ca353b526'), 
+    (11, 'Dr. Sophia Miller', 'sophiaisthebest25', '31faceb5794c613dbc51aa40fd4bb433ffd2e9e5f3c4c514a237da7ca353b526'), 
+    (12, 'Dr. Benjamin Carter', 'benjamincarter345', '31faceb5794c613dbc51aa40fd4bb433ffd2e9e5f3c4c514a237da7ca353b526'), 
+    (13, 'Dr. Chloe Thompson', 'chloethompson359263', '31faceb5794c613dbc51aa40fd4bb433ffd2e9e5f3c4c514a237da7ca353b526'), 
+    (14, 'Dr. Daniel Robinson', 'danielrobin456', '31faceb5794c613dbc51aa40fd4bb433ffd2e9e5f3c4c514a237da7ca353b526'),
+    (15, 'Dr. Emily Davis', 'emilydavistt353', '31faceb5794c613dbc51aa40fd4bb433ffd2e9e5f3c4c514a237da7ca353b526'), 
+    (16, 'Dr. Nathan Hughes', 'nathanhuge5262', '31faceb5794c613dbc51aa40fd4bb433ffd2e9e5f3c4c514a237da7ca353b526'), 
+    (17, 'Dr. Olivia Martin', 'oliviamartin2552', '31faceb5794c613dbc51aa40fd4bb433ffd2e9e5f3c4c514a237da7ca353b526'), 
+    (18, 'Dr. Samuel Anderson', 'samualanderson256', '31faceb5794c613dbc51aa40fd4bb433ffd2e9e5f3c4c514a237da7ca353b526'),
+    (19, 'Dr. Victoria Hall', 'victoriahall452', '31faceb5794c613dbc51aa40fd4bb433ffd2e9e5f3c4c514a237da7ca353b526'), 
+    (20, 'Dr. William Scott', 'williamscott363', '31faceb5794c613dbc51aa40fd4bb433ffd2e9e5f3c4c514a237da7ca353b526');
+
+    -- Give admin privileges for staff users when the database gets restarted
+    UPDATE Staff SET IsAdmin = 1 WHERE StaffID = 1;
 
     -- Modules
     INSERT INTO Modules (ModuleID, ModuleName, ModuleLeaderID, Description) VALUES
