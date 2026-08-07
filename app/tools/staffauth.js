@@ -16,13 +16,13 @@ export function login(headers, { StaffID }) {
 
 export function logout(headers, request) {
     const session = currentSession(request);
-    deleteSession(session.id);
+    deleteSession(session.SessionID);
     deleteCookie(headers, "sessionId", { path: "/"});
 }
 
 export function currentSession(request) {
     const { sessionId } = getCookies(request.headers);
-    console.log({sessionId})
+    // console.log({sessionId})
     return sessionId && getSession(sessionId);
 }
 

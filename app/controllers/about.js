@@ -1,6 +1,6 @@
 import { render } from "../tools/render.js";
 import { aboutView } from "../views/about.js";
 
-export function aboutController() {
-    return render(aboutView);
+export function aboutController(ctx) {
+    return render(aboutView, {}, ctx);
 }

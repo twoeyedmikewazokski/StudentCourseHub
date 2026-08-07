@@ -131,6 +131,8 @@ export function validateSchema(formData, schema) {
 
         });
         const errors = Object.fromEntries(errorEntries)
+        if (!isValid)
+            console.log(errors);
         return { errors, isValid, validated}
     } catch (error) {
         console.error(error)

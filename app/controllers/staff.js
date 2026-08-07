@@ -5,23 +5,26 @@ import { newStaffSchema, validateSchema } from "../tools/validation.js";
 import { staffRegistrationFormView } from "../views/staffauth.js";
 import { login } from "../tools/staffauth.js";
 
-export function staffRegistrationFormController({ request }) {
+export function staffRegistrationFormController(ctx) {
     try {
+        const { request } = ctx
         console.log(request)
-        return render(staffRegistrationFormView, {}, 200);
+        return render(staffRegistrationFormView, {}, ctx);
     } catch (error) {
         console.error(error)
     }
 }
 
-export async function addStaffController({ request }) {
+export async function addStaffController(ctx) {
     try {
+        const { request } = ctx
         const formData = await request.formData();
         console.log(request);
         // Validate incoming user form data
         const { isValid, errors, validated } = validateSchema(formData, newStaffSchema);
         if (!isValid) {
-            return render(staffRegistrationFormView, { request, errors }, 404)
+            const status = 404
+            return render(staffRegistrationFormView, { errors }, { request, status})
         }
         console.log({ isValid, errors, validated })
         await createStaffUser(validated);

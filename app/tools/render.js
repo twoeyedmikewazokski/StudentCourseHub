@@ -11,16 +11,16 @@ import { currentUser } from "./staffauth.js";
 //to get the necessary fragment. It then wraps the fragment in HTML boilerplate using template literals (${})
 //Finally, it returns an HTML response.
 
-export function render(viewFunction, data, status) {
+export function render(viewFunction, data = {}, ctx) {
     try {
+        const { session, user, status=200 } = ctx
         const content = viewFunction(data);
-        const sessionMessage = data ? `Logged in as ${data.username}` : "";
-        // const authNav = data ? `<form method="POST" action="/stafflogout"><button
-        //     type="submit">Logout</button></form>`
-        //     : `<a href="/staffauth">Sign-in</a>`;
-        // const user = currentUser(data)
-        // console.log(user)
-        console.log("HTML rendered")
+        console.log({session, user});
+        const sessionMessage = session ? `Logged in as ${user.Username}` : "?";
+        const authNav = session ? `<form method="POST" action="/stafflogout"><button
+            type="submit">Logout</button></form>`
+            : `<a href="/staffauth">Sign-in</a>`;
+        const adminNav = user?.IsAdmin ? `<a href="/admin"> Admin </a>` : "";
         return new Response(
             `<!DOCTYPE html>
                 <html>
@@ -41,7 +41,8 @@ export function render(viewFunction, data, status) {
                             <li><a href = "/programmes"> Programmes </a></li>
                             <li><a href = "/modules"> Modules </a></li>
                             <li><a href = "/staff"> Staff </a></li>
-                            <li><a href = "/staffauth"> Sign-in </a></li>
+                            ${adminNav}
+                            ${authNav}
                         </ul>
                     </nav>
                     <main>

@@ -4,7 +4,7 @@
 
 import { serverHandler } from "./app/server.js"
 
-console.log("Executing main.js")
+//console.log("Executing main.js")
 
 Deno.serve(serverHandler)
 

@@ -5,39 +5,44 @@ import { staffLoginView } from "../views/staffauth.js";
 import { currentSession, login, logout } from "../tools/staffauth.js"
 import { getStaffById, getStaffIdByUsername, validateCredentials } from "../models/staff.js";
 
-export function staffLoginFormController({ request }) {
+export function staffLoginFormController(ctx) {
     try {
-        return render(staffLoginView, request, 200);
+        const { session } = ctx
+        if (session)
+            return redirect("/", "User has already logged in")
+        return render(staffLoginView, {}, ctx);
     } catch {error} {
         console.error(error)
     }
 }
 
-export async function addSessionController({ request }) {
+export async function addSessionController(ctx) {
     try {
         console.log("Adding session")
+        const { request } = ctx
         const formData = await request.formData()
         const username = formData.get('Username');
         const password = formData.get('Password');
         console.log("Username: ", username, ", Password: ", password)
+        const status = 404
 
         // Validate incoming user form data
         console.log("Validating incoming form data")
         const { isValid, errors, validated } = validateSchema(formData, currentStaffSchema);
         if (!isValid) {
-            console.log("error")
-            return render(staffLoginView, { errors }, 400);
+            //console.log({ isValid, errors, validated })
+            return render(staffLoginView, { errors }, { request, status });
         }
-        console.log({ isValid, errors, validated })
+       
 
         // Validate credentials
         console.log(`Validating ${username}'s credentials`)
         const {ok, err} = await validateCredentials(validated);
         if (!ok) {
-            return render(staffLoginView, { errors: {...err, ...errors}}, 400);
+            //console.log({ok, err})
+            return render(staffLoginView, { errors: {...err, ...errors}}, { request, status });
         }
-        console.log({ok, err})
-        console.log(validated.Username)
+        // console.log(validated.Username)
 
         // Create session with headers and staffID
         const headers = new Headers();
@@ -50,9 +55,10 @@ export async function addSessionController({ request }) {
     }
 }
 
-export function logoutController({ request }) {
+export function logoutController(ctx) {
     try {
-        const session = currentSession(request.headers)
+        //const session = currentSession(request.headers)
+        const { session, request } = ctx
         const headers = new Headers();
         if (session)
             logout(headers, request);

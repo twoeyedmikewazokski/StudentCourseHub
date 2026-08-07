@@ -1,6 +1,8 @@
 import { render } from "../tools/render.js";
 import { notFoundView } from "../views/notFound.js";
 
-export function notFoundController() {
-    return render(notFoundView, 404);
+export function notFoundController(ctx) {
+    const { request } = ctx
+    const status = 404
+    return render(notFoundView, {}, { request, status });
 }

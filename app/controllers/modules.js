@@ -5,21 +5,22 @@ import { render } from "../tools/render.js";
 import { newModuleSchema, validateSchema } from "../tools/validation.js";
 import { modulesView } from "../views/modules.js"
 
-export function modulesController() {
+export function modulesController(ctx) {
     try {
         const modules = getModules();
         const moduleLeaders = getAllStaffUsers();
         console.log(modules)
         // console.log(moduleLeaders)
-        return render(modulesView, { modules, moduleLeaders });
+        return render(modulesView, { modules, moduleLeaders }, ctx);
         
     } catch (error) {
         console.error(error);
     }
 }
 
-export async function addModuleController({ request }) {
+export async function addModuleController(ctx) {
     try {
+        const { request } = ctx
         // Parse form data from the POST request
         const formData = await request.formData();
 
@@ -30,7 +31,8 @@ export async function addModuleController({ request }) {
         if (!isValid) {
             const modules = getModules();
             const moduleLeaders = getAllStaffUsers();
-            return render(modulesView, { modules, moduleLeaders, errors }, 400)
+            const status = 400
+            return render(modulesView, { modules, moduleLeaders, errors }, { status })
         }
         console.log({ isValid, errors, validated })
 

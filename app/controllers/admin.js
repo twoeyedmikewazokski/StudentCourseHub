@@ -2,18 +2,16 @@ import { redirect } from "../tools/redirect.js";
 import { render } from "../tools/render.js";
 import { adminView } from "../views/admin.js";
 
-export function adminController({ request, user }) {
+export function adminController(ctx) {
     try {
-        console.log("????????")
-        console.log({ request, user });
-        console.log("????????")
+        const { request, user } = ctx
         if (!user) {
-            return redirect("/");
+            return redirect("/", "Access to Admin Panel forbidden");
         }
-        if (!user.IsAdmin == 1) {
-            return redirect("/");
+        if (user.IsAdmin != 1) {
+            return redirect("/", "Access to Admin Panel forbidden");
         }
-        return render(adminView, { request, user }, 200);
+        return render(adminView, {}, ctx);
     } catch (error) {
         console.error(error)
     }

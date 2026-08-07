@@ -4,7 +4,8 @@ import { getStaffById } from "../models/staff.js";
 // This function controller retrieves the staff member, finds their profile image
 // and returns the image with the correct content-type and content-size headers so the browser know it's 
 // an image.
-export function staffProfileController({ staffId }) {
+export function staffProfileController(ctx) {
+    const { staffId } = ctx
     const staff = getStaffById(staffId);
 
     if (!staff || !staff.ProfileImageID) {

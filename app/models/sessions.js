@@ -14,5 +14,5 @@ export function getSession(SessionID) {
 
 // POST METHOD
 export function deleteSession(SessionID) {
-    return db.prepare("DELETE FROM StaffSessions WHERE SessionID = ?").run({ SessionID });
+    return db.prepare("DELETE FROM StaffSessions WHERE SessionID = ?").run(SessionID);
 }
